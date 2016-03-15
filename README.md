@@ -23,7 +23,7 @@ MapReduce的核心概念
 
     hadoop jar wordcount/target/wordcount-1.0-SNAPSHOT.jar wc_test_input wc_test_output
 
-### putmerge
+### put-merge
 
 上传合并文件集
 

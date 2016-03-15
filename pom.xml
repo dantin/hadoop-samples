@@ -13,7 +13,9 @@
 
     <modules>
         <module>wordcount</module>
-        <module>putmerge</module>
+        <module>put-merge</module>
+        <module>wordcount2</module>
+        <module>customized-io</module>
     </modules>
 
     <properties>
