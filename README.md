@@ -10,6 +10,13 @@ HDFS常用操作
     hdfs dfs -rmr wc_test_output
     hdfs dfs -ls
 
+### MapReduce
+
+MapReduce的核心概念
+
+    map: (K1, V1) --> list(K2, V2)
+    reduce: (K2, list(V2)) --> list(K3, V3)
+
 ### wordcount
 
 词频统计算子
