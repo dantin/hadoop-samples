@@ -44,9 +44,7 @@
                 <configuration>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
-                        <manifest>
-                            <mainClass>com.cosmos.hadoop.sample.ReversePatentReference</mainClass>
-                        </manifest>
+                        <manifest></manifest>
                     </archive>
                 </configuration>
                 <executions>
