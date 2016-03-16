@@ -3,11 +3,10 @@ package com.cosmos.hadoop.sample;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -18,9 +17,9 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * 反转专利引用
+ * 专利引用次数
  */
-public class InvertedCitation extends Configured implements Tool {
+public class CitationCount extends Configured implements Tool {
 
     /**
      * 反转引用
@@ -48,7 +47,7 @@ public class InvertedCitation extends Configured implements Tool {
     }
 
     /**
-     * 归并引用
+     * 合并计数
      *
      * example
      *
@@ -57,20 +56,17 @@ public class InvertedCitation extends Configured implements Tool {
      *
      *   to
      *
-     *   (b, (a, b))
+     *   (b, 2)
      */
-    public static class Reduce extends Reducer<Text, Text, Text, Text> {
+    public static class CountReduce extends Reducer<Text, Text, Text, IntWritable> {
 
         @Override
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            StringBuilder csv = new StringBuilder();
-            for (Text value : values) {
-                if(csv.length() > 0) {
-                    csv.append(",");
-                }
-                csv.append(value.toString());
+            int count = 0;
+            for (Text ignored : values) {
+                count++;
             }
-            context.write(key, new Text(csv.toString()));
+            context.write(key, new IntWritable(count));
         }
     }
 
@@ -85,8 +81,8 @@ public class InvertedCitation extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
 
-        Job job = Job.getInstance(conf, "InvertedCitation");
-        job.setJarByClass(InvertedCitation.class);
+        Job job = Job.getInstance(conf, "CitationCount");
+        job.setJarByClass(CitationCount.class);
 
         Path in = new Path(args[0]);
         Path out = new Path(args[1]);
@@ -94,7 +90,7 @@ public class InvertedCitation extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, out);
 
         job.setMapperClass(InvertedMapper.class);
-        job.setReducerClass(Reduce.class);
+        job.setReducerClass(CountReduce.class);
 
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
@@ -107,7 +103,7 @@ public class InvertedCitation extends Configured implements Tool {
     }
 
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new InvertedCitation(), args);
+        int res = ToolRunner.run(new Configuration(), new CitationCount(), args);
 
         System.exit(res);
     }
