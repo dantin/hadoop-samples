@@ -17,7 +17,7 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * 专利引用次数
+ * 统计专利被引用次数
  */
 public class CitationCount extends Configured implements Tool {
 
@@ -26,35 +26,47 @@ public class CitationCount extends Configured implements Tool {
      *
      * example:
      *
+     *   专利a引用专利b, c, d
+     *
      *   (a, b)
      *   (a, c)
      *   (a, d)
      *
      *   to
      *
+     *   专利b被专利a引用
+     *   专利c被专利a引用
+     *   专利d被专利a引用
+     *
      *   (b, a)
      *   (c, a)
      *   (d, a)
-     *
      */
     public static class InvertedMapper extends Mapper<LongWritable, Text, Text, Text> {
 
+        private static final String COMMA = ",";
+
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            String[] citation = value.toString().split(",");
+            String[] citation = value.toString().split(COMMA);
             context.write(new Text(citation[1]), new Text(citation[0]));
         }
     }
 
     /**
-     * 合并计数
+     * 归并计数
      *
      * example
      *
+     *   专利b被专利a引用
+     *   专利b被专利c引用
+     *
      *   (b, a)
-     *   (b, b)
+     *   (b, c)
      *
      *   to
+     *
+     *   专利b被引用2次
      *
      *   (b, 2)
      */
@@ -70,13 +82,6 @@ public class CitationCount extends Configured implements Tool {
         }
     }
 
-    /**
-     * Driver function
-     *
-     * @param args arguments
-     * @return return code
-     * @throws Exception
-     */
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();

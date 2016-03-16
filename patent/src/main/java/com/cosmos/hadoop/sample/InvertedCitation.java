@@ -18,7 +18,7 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * 反转专利引用
+ * 统计专利被引用详情
  */
 public class InvertedCitation extends Configured implements Tool {
 
@@ -27,11 +27,17 @@ public class InvertedCitation extends Configured implements Tool {
      *
      * example:
      *
+     *   专利a引用专利b, c, d
+     *
      *   (a, b)
      *   (a, c)
      *   (a, d)
      *
      *   to
+     *
+     *   专利b被专利a引用
+     *   专利c被专利a引用
+     *   专利d被专利a引用
      *
      *   (b, a)
      *   (c, a)
@@ -52,12 +58,17 @@ public class InvertedCitation extends Configured implements Tool {
      *
      * example
      *
+     *   专利b被专利a引用
+     *   专利b被专利c引用
+     *
      *   (b, a)
-     *   (b, b)
+     *   (b, c)
      *
      *   to
      *
-     *   (b, (a, b))
+     *   专利b被专利a, c引用
+     *
+     *   (b, (a, c))
      */
     public static class Reduce extends Reducer<Text, Text, Text, Text> {
 
@@ -74,13 +85,6 @@ public class InvertedCitation extends Configured implements Tool {
         }
     }
 
-    /**
-     * Driver function
-     *
-     * @param args arguments
-     * @return return code
-     * @throws Exception
-     */
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
