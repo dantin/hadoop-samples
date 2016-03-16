@@ -16,6 +16,7 @@
         <module>put-merge</module>
         <module>wordcount2</module>
         <module>customized-io</module>
+        <module>patent</module>
     </modules>
 
     <properties>
