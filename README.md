@@ -28,3 +28,23 @@ MapReduce的核心概念
 上传合并文件集
 
     hadoop jar putmerge/target/putmerge-1.0-SNAPSHOT.jar input merged.txt
+
+
+hadoop jar patent/target/patent-1.0-SNAPSHOT.jar com.cosmos.hadoop.sample.InvertedCitation input/cite75_99.txt output
+hadoop jar patent/target/patent-1.0-SNAPSHOT.jar com.cosmos.hadoop.sample.CitationCount input/cite75_99.txt citation_count
+hadoop jar patent/target/patent-1.0-SNAPSHOT.jar com.cosmos.hadoop.sample.CitationHistogram citation_count citation_histogram
+
+### Hadoop Streaming
+
+    hadoop jar share/hadoop/tools/lib/hadoop-streaming-2.7.2.jar \
+        -input input/cite75_99.txt \
+        -output test \
+        -mapper 'cut -f 2 -d ,' \
+        -reducer 'uniq'
+    
+    hadoop jar share/hadoop/tools/lib/hadoop-streaming-2.7.2.jar \
+        -D mapred.reduce.tasks=0 \
+        -input test \
+        -output test_a \
+        -mapper 'wc -l'
+
